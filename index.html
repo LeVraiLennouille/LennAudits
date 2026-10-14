@@ -19,6 +19,11 @@
 <h4>Outils annexes</h4><button class="Tab" data-s="map">Sitemap</button><button class="Tab" data-s="q">Questionnaire</button>
 <div class="TabEnd"><span id="st"></span><button class="BtnSolid sm" data-p>Exporter en PDF</button><button class="Ghost" id="rst">Réinitialiser</button></div>
 </nav>
+<dialog id="ex" aria-labelledby="ext"><div class="ExHd"><div><span class="Eyebrow">Export</span><h2 id="ext">Exporter en PDF</h2></div><button class="Ghost" data-x="cancel" aria-label="Fermer">×</button></div>
+<p class="Subtitle">Coche les éléments à inclure dans le PDF.</p>
+<div class="ExBar"><button class="Ghost" id="exall" data-x="all">Tout sélectionner</button><span id="exn"></span></div>
+<div id="exb"></div>
+<div class="ExFt"><button class="Ghost" data-x="cancel">Annuler</button><button class="BtnSolid" id="exgo" data-x="go">Générer le PDF</button></div></dialog>
 <main id="main"></main>
 <script src="script.js"></script>
 </body>

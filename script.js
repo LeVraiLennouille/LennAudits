@@ -81,7 +81,7 @@ const main=$('#main');let cur;
 const fit=()=>document.querySelectorAll('textarea').forEach(t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px'});
 const show=(id,keep)=>{const y=scrollY;cur=S.cur=id;main.innerHTML=page(id);fit();document.querySelectorAll('.Tab').forEach(b=>b.classList.toggle('on',b.dataset.s==id));save();scrollTo(0,keep?y:0)};
 const ADD=p=>p=='conc'?{id:uid(),n:'',u:''}:p=='cx'||p=='cmp'?{c:'',v:{}}:p=='map'?{t:'',d:0}:p=='q'?{t:'',y:'text',o:''}:/^(a|nt)\./.test(p)?{t:'',x:''}:{t:'',s:'',n:''};
-async function exportPDF(){
+async function exportPDF(keys){keys=keys||ex();const on=k=>keys.includes(k);
 const st=$('#st');st.textContent='Génération du PDF…';
 try{
 const M=50,PW=595,PH=842,BL='0.12 0.49 0.87',GR='0.24 0.24 0.24',pgs=[[]],cv=document.createElement('canvas').getContext('2d');let y=M;
@@ -97,18 +97,18 @@ const h2=t=>{y+=2;p(t,{sz:11.5,b:1,col:'0.11 0.11 0.12',gap:2})};
 const tb=(head,rows)=>{if(!rows.length)return p('Aucune donnée saisie.');rows.forEach(r=>{p(r[0],{b:1,gap:1});r.slice(1).forEach((v,i)=>{if(String(v||'').trim())p(head[i+1]+' : '+v,{x:M+14,gap:1})});y+=6})};
 const cs=COLS(),hd=['Critère',...cs.map(c=>c.n)],tab=k=>S[k].filter(r=>r.c||Object.values(r.v||{}).some(v=>String(v).trim())).map(r=>[r.c,...cs.map(c=>(r.v||{})[c.id]||'')]);
 p('Audit UX',{sz:28,b:1,col:'0.11 0.11 0.12',gap:6});p('Édité le '+new Date().toLocaleDateString('fr-FR')+(S.site.n?' · '+S.site.n:''));
-h1('Persona');p([S.p.nom,S.p.age,S.p.job].filter(Boolean).join(' · '),{b:1});p(S.p.bio);p(S.p.pers);y+=4;
-SL.forEach((s,i)=>p(s[0]+' - '+s[1]+' : '+(S.p['s'+i]??50)+' % vers '+s[1],{gap:1}));
-h1('À propos du persona');AK.forEach(([k,t])=>{const n=S.a[k].filter(z=>(z.t+z.x).trim());if(n.length){h2(t);n.forEach(z=>{p(z.t,{b:1,gap:0,x:M+10});p(z.x,{x:M+10})})}});
-h1('Analyse des concurrents');tb(hd,tab('cx'));
-h1('Tableau comparatif');tb(hd,tab('cmp'));
-h1('Matrice SWOT');[['s','Forces'],['w','Faiblesses'],['o','Opportunités'],['t','Menaces']].forEach(([k,t])=>{if((S.sw[k]||'').trim()){h2(t);p(S.sw[k],{x:M+10})}});
-h1('Matrice PESTEL');[['po','Politique'],['ec','Économique'],['so','Social'],['te','Technologique'],['en','Environnemental'],['le','Légal']].forEach(([k,t])=>{if((S.pe[k]||'').trim()){h2(t);p(S.pe[k],{x:M+10})}});
-h1('Les 5 forces de Porter');FP.forEach(([k,t])=>{const f=S.pt[k]||{};if(f.s||(f.x||'').trim()){h2(t+(f.s?' - intensité '+['','faible','modérée','forte'][+f.s]:''));p(f.x,{x:M+10})}});
-[['seo','Audit SEO'],['co','Audit Contenu'],['ux','Audit UX']].forEach(([k,t])=>{h1(t+' - score '+score(k)+' %');tb(['Critère','Note','Remarques'],S.au[k].map(x=>[x.t,x.s===''?'':SC[+x.s+1],x.n]));S.nt[k].filter(z=>(z.t+z.x).trim()).forEach(z=>{h2(z.t||'Constat');p(z.x,{x:M+10})})});
-h1('Sitemap');S.map.forEach(x=>p((x.d?'- ':'')+x.t,{x:M+x.d*18,gap:1}));
-h1('Questionnaire');if(!S.q.length)p('Aucune question.');
-S.q.forEach((x,i)=>{p((i+1)+'. '+x.t,{b:1,gap:1});p('Type : '+(QT.find(t=>t[0]==(x.y||'text'))||['',''])[1]+(x.o?' · Options : '+x.o.split('\n').filter(Boolean).join(' / '):''),{x:M+14})});
+if(on('persona')){h1('Persona');p([S.p.nom,S.p.age,S.p.job].filter(Boolean).join(' · '),{b:1});p(S.p.bio);p(S.p.pers);y+=4;
+SL.forEach((s,i)=>p(s[0]+' - '+s[1]+' : '+(S.p['s'+i]??50)+' % vers '+s[1],{gap:1}));}
+if(on('about')){h1('À propos du persona');AK.forEach(([k,t])=>{const n=S.a[k].filter(z=>(z.t+z.x).trim());if(n.length){h2(t);n.forEach(z=>{p(z.t,{b:1,gap:0,x:M+10});p(z.x,{x:M+10})})}});}
+if(on('conc')){h1('Analyse des concurrents');tb(hd,tab('cx'));}
+if(on('cmp')){h1('Tableau comparatif');tb(hd,tab('cmp'));}
+if(on('swot')){h1('Matrice SWOT');[['s','Forces'],['w','Faiblesses'],['o','Opportunités'],['t','Menaces']].forEach(([k,t])=>{if((S.sw[k]||'').trim()){h2(t);p(S.sw[k],{x:M+10})}});}
+if(on('pestel')){h1('Matrice PESTEL');[['po','Politique'],['ec','Économique'],['so','Social'],['te','Technologique'],['en','Environnemental'],['le','Légal']].forEach(([k,t])=>{if((S.pe[k]||'').trim()){h2(t);p(S.pe[k],{x:M+10})}});}
+if(on('porter')){h1('Les 5 forces de Porter');FP.forEach(([k,t])=>{const f=S.pt[k]||{};if(f.s||(f.x||'').trim()){h2(t+(f.s?' - intensité '+['','faible','modérée','forte'][+f.s]:''));p(f.x,{x:M+10})}});}
+[['seo','Audit SEO'],['co','Audit Contenu'],['ux','Audit UX']].forEach(([k,t])=>{if(!on(k))return;h1(t+' - score '+score(k)+' %');tb(['Critère','Note','Remarques'],S.au[k].map(x=>[x.t,x.s===''?'':SC[+x.s+1],x.n]));S.nt[k].filter(z=>(z.t+z.x).trim()).forEach(z=>{h2(z.t||'Constat');p(z.x,{x:M+10})})});
+if(on('map')){h1('Sitemap');S.map.forEach(x=>p((x.d?'- ':'')+x.t,{x:M+x.d*18,gap:1}));}
+if(on('q')){h1('Questionnaire');if(!S.q.length)p('Aucune question.');
+S.q.forEach((x,i)=>{p((i+1)+'. '+x.t,{b:1,gap:1});p('Type : '+(QT.find(t=>t[0]==(x.y||'text'))||['',''])[1]+(x.o?' · Options : '+x.o.split('\n').filter(Boolean).join(' / '):''),{x:M+14})});}
 let out='%PDF-1.4\n';const off=[],put=s=>{off.push(out.length);out+=off.length+' 0 obj\n'+s+'\nendobj\n'};
 put('<</Type/Catalog/Pages 2 0 R>>');put('<</Type/Pages/Kids['+pgs.map((_,i)=>(6+2*i)+' 0 R').join(' ')+']/Count '+pgs.length+'>>');
 put('<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>');put('<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>');
@@ -121,8 +121,16 @@ else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.down
 st.textContent='PDF prêt'
 }catch(e){if(e&&e.code=='declined'){st.textContent='Export annulé';return}console.error(e);st.textContent='Échec du PDF, impression…';print()}
 }
+const EXG=[['Analyse UX',[['persona','Persona']]],['À propos',[['about','À propos du persona']]],['Benchmarking',[['conc','Concurrents'],['cmp','Tableau comparatif'],['swot','Matrice SWOT'],['pestel','Matrice PESTEL'],['porter','Les 5 forces de Porter'],['seo','Audit SEO'],['co','Audit Contenu'],['ux','Audit UX']]],['Outils annexes',[['map','Sitemap'],['q','Questionnaire']]]];
+const EXK=EXG.flatMap(g=>g[1].map(x=>x[0])),ex=()=>S.ex||(S.ex=EXK.slice());
+function exSync(){const n=ex().length;$('#exn').textContent=n+' / '+EXK.length+' sélectionné(s)';$('#exall').textContent=n==EXK.length?'Tout désélectionner':'Tout sélectionner';$('#exgo').disabled=!n}
+function exRender(){const e=ex();$('#exb').innerHTML=EXG.map(([g,l])=>`<fieldset><legend>${g}</legend>${l.map(([k,t])=>`<label class="ck"><input type="checkbox" data-e="${k}"${e.includes(k)?' checked':''}><span>${t}</span></label>`).join('')}</fieldset>`).join('');exSync()}
+function openEx(){exRender();$('#ex').showModal()}
+function exAct(a){const d=$('#ex');if(a=='cancel')return d.close();if(a=='all'){S.ex=ex().length==EXK.length?[]:EXK.slice();save();return exRender()}if(a=='go'){const k=ex().slice();d.close();exportPDF(k)}}
+document.addEventListener('change',e=>{const k=e.target.dataset&&e.target.dataset.e;if(!k)return;const a=ex();S.ex=e.target.checked?(a.includes(k)?a:[...a,k]):a.filter(x=>x!=k);save();exSync()});
+$('#ex').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.close()});
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
-if('p' in b.dataset)return exportPDF();if(b.dataset.s)return show(b.dataset.s);
+if('p' in b.dataset)return openEx();if(b.dataset.x)return exAct(b.dataset.x);if(b.dataset.s)return show(b.dataset.s);
 if(!b.dataset.a)return;const[op,p,i,d]=b.dataset.a.split(':'),arr=get(p);
 if(op=='add')arr.push(ADD(p));
 else if(op=='del')arr.splice(+i,1);
