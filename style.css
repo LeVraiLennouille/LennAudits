@@ -120,3 +120,8 @@ body{font-size:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 textarea{resize:none}.scr{overflow:visible}.tb td{min-width:0}
 }
 :root{--G2:#5FD07A;--G3:#145A25;--G4:#8FD9A3;--G5:#2F9E4B}
+
+/* Modules : 4 cards par ligne, largeur de card conservée (~320px) */
+.Body:has(.OfferGrid){max-width:1444px}
+.OfferGrid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+@media(max-width:560px){.OfferGrid{grid-template-columns:1fr}}
