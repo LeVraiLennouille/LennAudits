@@ -125,3 +125,7 @@ textarea{resize:none}.scr{overflow:visible}.tb td{min-width:0}
 .Body:has(.OfferGrid){max-width:1444px}
 .OfferGrid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
 @media(max-width:560px){.OfferGrid{grid-template-columns:1fr}}
+
+/* SWOT : grille 2x2 — PESTEL : grille 2x3 */
+.g2.mx,.g3.mx{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:560px){.g2.mx,.g3.mx{grid-template-columns:1fr}}
