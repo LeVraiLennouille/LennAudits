@@ -23,7 +23,8 @@
 <dialog id="ex" aria-labelledby="ext"><div class="ExHd"><div><span class="Eyebrow">Export</span><h2 id="ext">Exporter en PDF</h2></div><button class="Ghost" data-x="cancel" aria-label="Fermer">×</button></div>
 <p class="Subtitle">Coche les éléments à inclure dans le PDF.</p>
 <div class="ExBar"><button class="Ghost" id="exall" data-x="all">Tout sélectionner</button><span id="exn"></span></div>
-<fieldset class="ExOr"><legend>Format A4 (210 × 297 mm)</legend><label class="ck"><input type="radio" name="or" value="p" checked><i class="Pg" aria-hidden="true"></i><span>Portrait</span></label><label class="ck"><input type="radio" name="or" value="l"><i class="Pg l" aria-hidden="true"></i><span>Paysage</span></label></fieldset>
+<fieldset class="ExOr ExFm"><legend>Format de papier</legend><label class="ck"><input type="radio" name="fm" value="A3"><span>A3<small>297 × 420 mm</small></span></label><label class="ck"><input type="radio" name="fm" value="A4" checked><span>A4<small>210 × 297 mm</small></span></label><label class="ck"><input type="radio" name="fm" value="A5"><span>A5<small>148 × 210 mm</small></span></label></fieldset>
+<fieldset class="ExOr"><legend>Orientation</legend><label class="ck"><input type="radio" name="or" value="p" checked><i class="Pg" aria-hidden="true"></i><span>Portrait</span></label><label class="ck"><input type="radio" name="or" value="l"><i class="Pg l" aria-hidden="true"></i><span>Paysage</span></label></fieldset>
 <div id="exb"></div>
 <div class="ExFt"><button class="Ghost" data-x="cancel">Annuler</button><button class="BtnSolid" id="exgo" data-x="go">Générer le PDF</button></div></dialog>
 <main id="main"></main>

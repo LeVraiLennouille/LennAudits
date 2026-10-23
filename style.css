@@ -137,3 +137,7 @@ textarea{resize:none}.scr{overflow:visible}.tb td{min-width:0}
 .Pg{display:block;flex:none;width:14px;height:20px;border:2px solid var(--Link);border-radius:2px}
 .Pg.l{width:20px;height:14px}
 @page{size:A4 portrait}
+
+#ex .ExFm{grid-template-columns:repeat(3,minmax(0,1fr))}
+#ex .ExFm .ck span{display:flex;flex-direction:column;line-height:1.25}
+#ex .ck small{font-weight:500;font-size:.72rem;color:var(--MinMuted)}

@@ -84,7 +84,7 @@ const ADD=p=>p=='conc'?{id:uid(),n:'',u:''}:p=='cx'||p=='cmp'?{c:'',v:{}}:p=='ma
 async function exportPDF(keys){
 keys=keys||ex();const on=k=>keys.includes(k),st=$('#st');st.textContent='Génération du PDF…';
 try{
-const LS=S.or=='l',PW=LS?842:595,PH=LS?595:842,M=44,CW=PW-2*M,TOP=64,BOT=PH-58,pgs=[[],[]],toc=[],anns=[],cv=document.createElement('canvas').getContext('2d');let cur=0,y=TOP;
+const LS=S.or=='l',Z={A3:[842,1191],A5:[420,595]}[S.fm]||[595,842],MW=LS?Z[1]:Z[0],MH=LS?Z[0]:Z[1],PW=LS?842:595,PH=LS?595:842,K=MW/PW,M=44,CW=PW-2*M,TOP=64,BOT=PH-58,pgs=[[],[]],toc=[],anns=[],cv=document.createElement('canvas').getContext('2d');let cur=0,y=TOP;
 const hx=h=>[0,2,4].map(i=>(parseInt(h.replace('#','').substr(i,2),16)/255).toFixed(3)).join(' ');
 const C={bl:hx('28A745'),db:hx('1E7E34'),ch:hx('1c1c1e'),mu:hx('555555'),lt:hx('8a8a90'),bd:hx('d9d3ca'),bg:hx('f8f6f2'),soft:hx('d4eddb'),wh:'1 1 1',gr:hx('22c55e'),am:hx('f59e0b'),rd:hx('e53e3e')};
 const G={bl:{t:hx('e9f6ec'),a:C.bl},am:{t:hx('d4eddb'),a:hx('1E7E34')},vi:{t:hx('e9f6ec'),a:hx('28A745')},gr:{t:hx('eef8f0'),a:hx('5FD07A')},ne:{t:hx('f3f3f1'),a:hx('a8a8ad')}},AG={int:G.bl,soc:G.bl,obj:G.bl,inf:G.bl,ach:G.am,bes:G.am,mot:G.am,fru:G.am};
@@ -179,22 +179,22 @@ let out='%PDF-1.4\n';const off=[],put=s=>{off.push(out.length);out+=off.length+'
 put('<</Type/Catalog/Pages 2 0 R>>');put('<</Type/Pages/Kids['+pgs.map((_,i)=>(6+2*i)+' 0 R').join(' ')+']/Count '+N+'>>');
 put('<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>');put('<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>');
 const AI=pgs.map(()=>[]);anns.forEach((a,j)=>AI[a.p].push(j));
-pgs.forEach((c,i)=>{const s=c.join('\n');put('<</Length '+s.length+'>>\nstream\n'+s+'\nendstream');put('<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+PW+' '+PH+']/Resources<</Font<</F1 3 0 R/F2 4 0 R>>/ExtGState<</G1<</ca .09>>/G2<</ca .13>>/G3<</ca .07/CA .07>>/G4<</CA .28>>>>>>/Contents '+(5+2*i)+' 0 R'+(AI[i].length?'/Annots['+AI[i].map(j=>(2*N+5+j)+' 0 R').join(' ')+']':'')+'>>')});anns.forEach(a=>put('<</Type/Annot/Subtype/Link/Rect['+a.r.map(f).join(' ')+']/Border[0 0 0]/Dest['+(6+2*a.d)+' 0 R/XYZ 0 '+PH+' 0]>>'));
+pgs.forEach((c,i)=>{const s=K==1?c.join('\n'):'q '+K.toFixed(5)+' 0 0 '+K.toFixed(5)+' 0 0 cm\n'+c.join('\n')+'\nQ';put('<</Length '+s.length+'>>\nstream\n'+s+'\nendstream');put('<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+f(MW)+' '+f(MH)+']/Resources<</Font<</F1 3 0 R/F2 4 0 R>>/ExtGState<</G1<</ca .09>>/G2<</ca .13>>/G3<</ca .07/CA .07>>/G4<</CA .28>>>>>>/Contents '+(5+2*i)+' 0 R'+(AI[i].length?'/Annots['+AI[i].map(j=>(2*N+5+j)+' 0 R').join(' ')+']':'')+'>>')});anns.forEach(a=>put('<</Type/Annot/Subtype/Link/Rect['+a.r.map(v=>f(v*K)).join(' ')+']/Border[0 0 0]/Dest['+(6+2*a.d)+' 0 R/XYZ 0 '+f(MH)+' 0]>>'));
 const xr=out.length;out+='xref\n0 '+(off.length+1)+'\n0000000000 65535 f \n'+off.map(o=>String(o).padStart(10,'0')+' 00000 n \n').join('')+'trailer\n<</Size '+(off.length+1)+'/Root 1 0 R/Info<</Title(Audit UX)/Producer(Lennouille)>>>>\nstartxref\n'+xr+'\n%%EOF';
 const bytes=new Uint8Array(out.length);for(let i=0;i<out.length;i++)bytes[i]=out.charCodeAt(i);
 const blob=new Blob([bytes],{type:'application/pdf'}),name='audit-ux-'+new Date().toISOString().slice(0,10)+'.pdf',dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;
 if(dl)await dl.save({filename:name,data:blob});
 else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
 st.textContent='PDF prêt'
-}catch(e){if(e&&e.code=='declined'){st.textContent='Export annulé';return}console.error(e);st.textContent='Échec du PDF, impression…';let ps=document.getElementById('pgstyle');if(!ps){ps=document.createElement('style');ps.id='pgstyle';document.head.appendChild(ps)}ps.textContent='@page{size:A4 '+(S.or=='l'?'landscape':'portrait')+'}';print()}
+}catch(e){if(e&&e.code=='declined'){st.textContent='Export annulé';return}console.error(e);st.textContent='Échec du PDF, impression…';let ps=document.getElementById('pgstyle');if(!ps){ps=document.createElement('style');ps.id='pgstyle';document.head.appendChild(ps)}ps.textContent='@page{size:'+(S.fm||'A4')+' '+(S.or=='l'?'landscape':'portrait')+'}';print()}
 }
 const EXG=[['Analyse UX',[['persona','Persona']]],['À propos',[['about','À propos du persona']]],['Benchmarking',[['conc','Concurrents'],['cmp','Tableau comparatif'],['swot','Matrice SWOT'],['pestel','Matrice PESTEL'],['porter','Les 5 forces de Porter'],['seo','Audit SEO'],['co','Audit Contenu'],['ux','Audit UX']]],['Outils annexes',[['map','Sitemap'],['q','Questionnaire']]]];
 const EXK=EXG.flatMap(g=>g[1].map(x=>x[0])),ex=()=>S.ex||(S.ex=EXK.slice());
 function exSync(){const n=ex().length;$('#exn').textContent=n+' / '+EXK.length+' sélectionné(s)';$('#exall').textContent=n==EXK.length?'Tout désélectionner':'Tout sélectionner';$('#exgo').disabled=!n}
 function exRender(){const e=ex();$('#exb').innerHTML=EXG.map(([g,l])=>`<fieldset><legend>${g}</legend>${l.map(([k,t])=>`<label class="ck"><input type="checkbox" data-e="${k}"${e.includes(k)?' checked':''}><span>${t}</span></label>`).join('')}</fieldset>`).join('');exSync()}
-function openEx(){exRender();document.querySelectorAll('input[name=or]').forEach(r=>r.checked=r.value==(S.or||'p'));$('#ex').showModal()}
+function openEx(){exRender();document.querySelectorAll('input[name=or]').forEach(r=>r.checked=r.value==(S.or||'p'));document.querySelectorAll('input[name=fm]').forEach(r=>r.checked=r.value==(S.fm||'A4'));$('#ex').showModal()}
 function exAct(a){const d=$('#ex');if(a=='cancel')return d.close();if(a=='all'){S.ex=ex().length==EXK.length?[]:EXK.slice();save();return exRender()}if(a=='go'){const k=ex().slice();d.close();exportPDF(k)}}
-document.addEventListener('change',e=>{if(e.target.name=='or'){S.or=e.target.value=='l'?'l':'p';save();return}const k=e.target.dataset&&e.target.dataset.e;if(!k)return;const a=ex();S.ex=e.target.checked?(a.includes(k)?a:[...a,k]):a.filter(x=>x!=k);save();exSync()});
+document.addEventListener('change',e=>{if(e.target.name=='fm'){S.fm=['A3','A5'].includes(e.target.value)?e.target.value:'A4';save();return}if(e.target.name=='or'){S.or=e.target.value=='l'?'l':'p';save();return}const k=e.target.dataset&&e.target.dataset.e;if(!k)return;const a=ex();S.ex=e.target.checked?(a.includes(k)?a:[...a,k]):a.filter(x=>x!=k);save();exSync()});
 $('#ex').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.close()});
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
 if('p' in b.dataset)return openEx();if(b.dataset.x)return exAct(b.dataset.x);if(b.dataset.s)return show(b.dataset.s);
