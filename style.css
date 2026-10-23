@@ -129,3 +129,11 @@ textarea{resize:none}.scr{overflow:visible}.tb td{min-width:0}
 /* SWOT : grille 2x2 — PESTEL : grille 2x3 */
 .g2.mx,.g3.mx{grid-template-columns:repeat(2,minmax(0,1fr))}
 @media(max-width:560px){.g2.mx,.g3.mx{grid-template-columns:1fr}}
+/* Export PDF : choix d'orientation A4 */
+#ex .ExOr{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:none;margin:0 0 14px}
+#ex .ExOr legend{grid-column:1/-1}
+#ex .ExOr .ck{margin:0}
+.ck:has(input:checked){border-color:var(--Primary);background:var(--Soft)}
+.Pg{display:block;flex:none;width:14px;height:20px;border:2px solid var(--Link);border-radius:2px}
+.Pg.l{width:20px;height:14px}
+@page{size:A4 portrait}

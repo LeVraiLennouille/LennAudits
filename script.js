@@ -84,7 +84,7 @@ const ADD=p=>p=='conc'?{id:uid(),n:'',u:''}:p=='cx'||p=='cmp'?{c:'',v:{}}:p=='ma
 async function exportPDF(keys){
 keys=keys||ex();const on=k=>keys.includes(k),st=$('#st');st.textContent='Génération du PDF…';
 try{
-const PW=595,PH=842,M=44,CW=PW-2*M,TOP=64,BOT=PH-58,pgs=[[],[]],toc=[],anns=[],cv=document.createElement('canvas').getContext('2d');let cur=0,y=TOP;
+const LS=S.or=='l',PW=LS?842:595,PH=LS?595:842,M=44,CW=PW-2*M,TOP=64,BOT=PH-58,pgs=[[],[]],toc=[],anns=[],cv=document.createElement('canvas').getContext('2d');let cur=0,y=TOP;
 const hx=h=>[0,2,4].map(i=>(parseInt(h.replace('#','').substr(i,2),16)/255).toFixed(3)).join(' ');
 const C={bl:hx('28A745'),db:hx('1E7E34'),ch:hx('1c1c1e'),mu:hx('555555'),lt:hx('8a8a90'),bd:hx('d9d3ca'),bg:hx('f8f6f2'),soft:hx('d4eddb'),wh:'1 1 1',gr:hx('22c55e'),am:hx('f59e0b'),rd:hx('e53e3e')};
 const G={bl:{t:hx('e9f6ec'),a:C.bl},am:{t:hx('d4eddb'),a:hx('1E7E34')},vi:{t:hx('e9f6ec'),a:hx('28A745')},gr:{t:hx('eef8f0'),a:hx('5FD07A')},ne:{t:hx('f3f3f1'),a:hx('a8a8ad')}},AG={int:G.bl,soc:G.bl,obj:G.bl,inf:G.bl,ach:G.am,bes:G.am,mot:G.am,fru:G.am};
@@ -120,13 +120,13 @@ const quad=(items,cols)=>{const gap=12,w=(CW-gap*(cols-1))/cols,bl=z=>String(z.x
 row.forEach((z,j)=>{const x=M+j*(w+gap);gc(x,y,w,h,z.g,8);txr(z.l,x+w-12,y+h-8,46,{b:1,c:z.g.a,a:2});tx(z.t,x+18,y+20,10.5,{b:1});if(z.tag)pill(z.tag,x+w-12,y+9,z.g.a,6.5);let yy=y+32;const b=bl(z);if(!b.length)tx('—',x+18,yy+9,9,{c:C.lt});b.forEach(l=>{circ(x+21,yy+6,1.8,{f:z.g.a});yy+=blk(l,x+30,yy,w-62,9)+4})});y+=h+gap}};
 const gc=(x,t,w,h,g,r=10)=>{box(x,t,w,h,{f:g.a,r});box(x+4,t,w-4,h,{f:g.t,r})};
 const bar=(pct,col,x,t0,w)=>{box(x,t0,w,7,{f:C.bd,r:3.5});if(pct>0)box(x,t0,Math.max(7,w*pct/100),7,{f:col,r:3.5})};
-const nm=S.site.n||'',dt=new Date().toLocaleDateString('fr-FR');
+const nm=S.site.n||'',dt=new Date().toLocaleDateString('fr-FR'),oy=LS?-120:0;
 cur=0;raw(`${C.ch} rg 0 0 ${PW} ${PH} re f`);circ(PW-60,170,260,{f:C.bl,a:2});circ(30,PH-80,220,{f:C.db,a:2});
 let dp='';for(let gx=26;gx<PW;gx+=26)for(let gy=26;gy<PH;gy+=26)dp+=`${gx} ${gy} 1.3 1.3 re `;raw(`q /G3 gs 1 1 1 rg ${dp}f Q`);
 raw(`q /G4 gs BT /F2 200 Tf 1 Tr ${C.bl} RG 1.3 w 1 0 0 1 ${PW-310} 48 Tm (UX) Tj ET Q`);
 box(M,48,32,32,{f:hx('d4eddb'),r:8});lg(M,48,32,C.bl);tx('Lennouille',M+42,69,13,{b:1,c:C.wh});
-tx('RAPPORT D’AUDIT',M,300,9.5,{b:1,c:C.bl});tx('Audit',M,372,60,{b:1,c:C.wh});tx('UX',M+wd('Audit ',60,1),372,60,{b:1,c:C.bl});box(M,396,64,4,{f:C.bl,r:2});
-let cy=438;if(nm){cy+=blk(nm,M,cy-16,380,22,{b:1,c:C.wh,lh:28})+4}if(S.site.u)tx(S.site.u,M,cy+4,11,{c:C.lt});
+tx('RAPPORT D’AUDIT',M,300+oy,9.5,{b:1,c:C.bl});tx('Audit',M,372+oy,60,{b:1,c:C.wh});tx('UX',M+wd('Audit ',60,1),372+oy,60,{b:1,c:C.bl});box(M,396+oy,64,4,{f:C.bl,r:2});
+let cy=438+oy;if(nm){cy+=blk(nm,M,cy-16,380,22,{b:1,c:C.wh,lh:28})+4}if(S.site.u)tx(S.site.u,M,cy+4,11,{c:C.lt});
 tx('Édité le '+dt,M,PH-70,10,{c:C.lt});tx(keys.length+' section'+(keys.length>1?'s':'')+' · Document de synthèse',M,PH-54,10,{c:C.lt});
 y=TOP;
 if(on('persona')){sect('persona','Persona');const pn=S.p.nom||'Persona',sb=[S.p.age,S.p.job].filter(Boolean).join(' · '),bio=hg(S.p.bio,CW-40,9.5),h=76+(bio?bio+16:4);need(h+12);
@@ -143,12 +143,12 @@ if(on('pestel')){sect('pestel','Matrice PESTEL');quad([['po','Politique',G.bl,'P
 const PC={ne:C.bl,fo:C.db,rv:hx('5FD07A'),cl:hx('145A25'),su:hx('8FD9A3')},IV=[['',''],['Faible',C.gr],['Modérée',C.am],['Forte',C.rd]],pv=FP.map(q=>+(S.pt[q[0]]||{}).s).filter(n=>n>0),pav=pv.length?pv.reduce((a,b)=>a+b,0)/pv.length:0,ppc=Math.round(pav/3*100),pcol=pav<1.67?C.gr:pav<2.34?C.am:C.rd;
 if(on('porter')){sect('porter','Les 5 forces de Porter');
 need(60);box(M,y,CW,50,{f:C.bg,r:10});tx('Intensité concurrentielle globale',M+18,y+22,10,{b:1});txr(pv.length?ppc+' %':'Non noté',M+CW-18,y+23,13,{b:1,c:pv.length?pcol:C.lt});bar(ppc,pcol,M+18,y+32,CW-36);y+=70;
-const gx=30,gy=32,bw=(CW-2*gx)/3,F=Object.fromEntries(FP.map(q=>[q[0],q])),lv=k=>+(S.pt[k]||{}).s||0,ic=k=>[C.lt,C.gr,C.am,C.rd][lv(k)],SN={ne:'Nouveaux entrants',fo:'Fournisseurs',rv:'Rivalité',cl:'Clients',su:'Substituts'};
-const prep=k=>{const d=S.pt[k]||{},cen=k=='rv',w=bw-26,tl=wrap(F[k][1],cen?10.5:9.5,1,w),mx=cen?9:6,xl=String(d.x||'').trim()?wrap(d.x,8.5,0,w):[],ls=xl.length>mx?[...xl.slice(0,mx-1),xl[mx-1].slice(0,-3)+'…']:xl;return{k,tl,ls,cen,h:Math.max(cen?100:80,30+tl.length*(cen?14:13)+22+ls.length*11.9+12)}};
+const gx=30,gy=LS?22:32,bw=(CW-2*gx)/3,F=Object.fromEntries(FP.map(q=>[q[0],q])),lv=k=>+(S.pt[k]||{}).s||0,ic=k=>[C.lt,C.gr,C.am,C.rd][lv(k)],SN={ne:'Nouveaux entrants',fo:'Fournisseurs',rv:'Rivalité',cl:'Clients',su:'Substituts'};
+const prep=k=>{const d=S.pt[k]||{},cen=k=='rv',w=bw-26,tl=wrap(F[k][1],cen?10.5:9.5,1,w),mx=cen?(LS?5:9):(LS?4:6),xl=String(d.x||'').trim()?wrap(d.x,8.5,0,w):[],ls=xl.length>mx?[...xl.slice(0,mx-1),xl[mx-1].slice(0,-3)+'…']:xl;return{k,tl,ls,cen,h:Math.max(cen?100:80,30+tl.length*(cen?14:13)+22+ls.length*11.9+12)}};
 const card=(b,x,t0,h)=>{const k=b.k;gc(x,t0,bw,h,G.bl,8);if(b.cen)box(x,t0,bw,h,{s:C.bl,lw:1.4,r:8});let yy=t0+12;b.tl.forEach(l=>{tx(l,x+14,yy+(b.cen?10:9),b.cen?10.5:9.5,{b:1});yy+=b.cen?14:13});yy+=5;
 for(let i=0;i<3;i++)box(x+14+i*21,yy,18,5,{f:i<lv(k)?ic(k):C.bd,r:2.5});tx(lv(k)?IV[lv(k)][0]:'Non noté',x+82,yy+5.5,7.5,{b:1,c:lv(k)?ic(k):C.lt});yy+=14;b.ls.forEach((l,i)=>tx(l,x+14,yy+9+i*11.9,8.5,{c:'0.2 0.2 0.2'}))};
 const B=Object.fromEntries(['ne','fo','rv','cl','su'].map(k=>[k,prep(k)])),h1=B.ne.h,h2=Math.max(B.fo.h,B.rv.h,B.cl.h),h3=B.su.h;
-const xc=M+bw+gx,xr=M+2*(bw+gx),y1=y,y2=y1+h1+gy,y3=y2+h2+gy,cx=xc+bw/2,ym=y2+h2/2;
+if(y>TOP)need(h1+h2+h3+2*gy);const xc=M+bw+gx,xr=M+2*(bw+gx),y1=y,y2=y1+h1+gy,y3=y2+h2+gy,cx=xc+bw/2,ym=y2+h2/2;
 card(B.ne,xc,y1,h1);card(B.fo,M,y2,h2);card(B.rv,xc,y2,h2);card(B.cl,xr,y2,h2);card(B.su,xc,y3,h3);
 const ar=(x1,t1,x2,t2,k)=>{const L=lv(k),c=ic(k),lw=1.6+L*1.3,hl=11,hw=5+L*1.6,d=Math.hypot(x2-x1,t2-t1),ux=(x2-x1)/d,uy=(t2-t1)/d,bx=x2-ux*hl,by=t2-uy*hl;ln(x1,t1,bx,by,c,lw);poly([[x2,t2],[bx-uy*hw,by+ux*hw],[bx+uy*hw,by-ux*hw]],c)};
 ar(cx,y1+h1+4,cx,y2-4,'ne');ar(M+bw+4,ym,xc-4,ym,'fo');ar(xr-4,ym,xc+bw+4,ym,'cl');ar(cx,y3-4,cx,y2+h2+4,'su');
@@ -165,12 +165,16 @@ if(ty=='one'||ty=='multi')ops.forEach(o=>{ty=='one'?circ(M+50,yy+6,4,{s:C.lt,lw:
 else if(ty=='scale'){for(let n=1;n<=5;n++){circ(M+56+(n-1)*44,yy+12,10,{f:C.wh,s:C.bd,lw:1});txc(String(n),M+56+(n-1)*44,yy+15.5,9,{b:1,c:C.mu})}}
 else if(ty=='yn'){['Oui','Non'].forEach((l,j)=>{box(M+46+j*70,yy+2,58,20,{f:C.wh,s:C.bd,lw:1,r:10});txc(l,M+75+j*70,yy+15.5,9,{b:1,c:C.mu})})}
 else{box(M+46,yy+2,CW-70,24,{f:C.wh,s:C.bd,lw:1,r:6});tx('Réponse libre',M+56,yy+18,8.5,{c:C.lt})}y+=h+10})}
-cur=1;y=TOP;tx('SOMMAIRE',M,y+8,8,{b:1,c:C.bl});tx('Au programme',M,y+34,23,{b:1});box(M,y+43,34,3,{f:C.bl,r:1.5});tx('Clique sur un titre pour accéder directement à la section.',M,y+66,9,{c:C.lt});y+=96;
-toc.forEach((e,i)=>{anns.push({p:1,r:[M,PH-y-20,M+CW,PH-y+2],d:e.pg});tx(String(i+1).padStart(2,'0'),M,y+13,10,{b:1,c:C.bl});tx(e.t,M+30,y+13,10.5,{b:1});const tw=wd(e.t,10.5,1);raw(`q [1 3] 0 d ${C.bd} RG .8 w ${f(M+30+tw+8)} ${f(PH-y-10)} m ${f(M+CW-26)} ${f(PH-y-10)} l S Q`);txr(String(e.pg+1),M+CW,y+13,10,{c:C.mu});y+=26});
 const mt=[];['seo','co','ux'].forEach(k=>on(k)&&S.au[k].some(x=>x.s!=='')&&mt.push([LBL[k],score(k),score(k)>=67?C.gr:score(k)>=34?C.am:C.rd]));if(on('porter')&&pv.length)mt.push(['Pression concurrentielle',ppc,pcol]);
+const cnt=[on('conc')&&S.conc.filter(x=>x.n).length&&S.conc.filter(x=>x.n).length+' concurrent(s) analysé(s)',on('about')&&AK.reduce((n,x)=>n+S.a[x[0]].filter(z=>(z.t+z.x).trim()).length,0)+' note(s) sur le persona',on('map')&&S.map.length+' page(s) au sitemap',on('q')&&S.q.length&&S.q.length+' question(s)'].filter(Boolean);
+const xh=(mt.length?136:20)+(cnt.length?14:0);let ys=TOP+96,T=1;toc.forEach(()=>{if(ys+26>BOT){T++;ys=TOP+40}ys+=26});if(ys+xh>BOT)T++;
+if(T>1){pgs.splice(2,0,...Array.from({length:T-1},()=>[]));toc.forEach(e=>e.pg+=T-1)}
+cur=1;y=TOP;tx('SOMMAIRE',M,y+8,8,{b:1,c:C.bl});tx('Au programme',M,y+34,23,{b:1});box(M,y+43,34,3,{f:C.bl,r:1.5});tx('Clique sur un titre pour accéder directement à la section.',M,y+66,9,{c:C.lt});y+=96;
+toc.forEach((e,i)=>{if(y+26>BOT){cur++;y=TOP;tx('SOMMAIRE (SUITE)',M,y+8,8,{b:1,c:C.bl});y+=40}anns.push({p:cur,r:[M,PH-y-20,M+CW,PH-y+2],d:e.pg});tx(String(i+1).padStart(2,'0'),M,y+13,10,{b:1,c:C.bl});tx(e.t,M+30,y+13,10.5,{b:1});const tw=wd(e.t,10.5,1);raw(`q [1 3] 0 d ${C.bd} RG .8 w ${f(M+30+tw+8)} ${f(PH-y-10)} m ${f(M+CW-26)} ${f(PH-y-10)} l S Q`);txr(String(e.pg+1),M+CW,y+13,10,{c:C.mu});y+=26});
+if(y+xh>BOT){cur++;y=TOP}
 if(mt.length){y+=22;tx('EN BREF',M,y+8,8,{b:1,c:C.bl});y+=22;const g=12,w=(CW-g*(mt.length-1))/mt.length;mt.forEach(([l,v,c],i)=>{const x=M+i*(w+g);box(x,y,w,78,{f:C.bg,r:10});tx(v+' %',x+14,y+34,22,{b:1,c});tx(l,x+14,y+52,8.5,{c:C.mu});bar(v,c,x+14,y+62,w-28)});y+=92}
-const cnt=[on('conc')&&S.conc.filter(x=>x.n).length&&S.conc.filter(x=>x.n).length+' concurrent(s) analysé(s)',on('about')&&AK.reduce((n,x)=>n+S.a[x[0]].filter(z=>(z.t+z.x).trim()).length,0)+' note(s) sur le persona',on('map')&&S.map.length+' page(s) au sitemap',on('q')&&S.q.length&&S.q.length+' question(s)'].filter(Boolean);if(cnt.length){y+=(mt.length?0:20);blk(cnt.join('   ·   '),M,y,CW,9,{c:C.mu})}
-const N=pgs.length;for(let i=1;i<N;i++){cur=i;tx('LENNOUILLE',M,32,7.5,{b:1,c:C.bl});txr('Audit UX'+(nm?' · '+nm:''),PW-M,32,7.5,{c:C.lt});ln(M,40,PW-M,40,C.bd,.6);ln(M,PH-42,PW-M,PH-42,C.bd,.6);tx('Rapport d’audit UX · '+dt,M,PH-28,7.5,{c:C.lt});txr('Page '+(i+1)+' / '+N,PW-M,PH-28,7.5,{b:1,c:C.mu});if(i>1){const sw=wd('Sommaire',7.5,1);txc('Sommaire',PW/2,PH-28,7.5,{b:1,c:C.bl});anns.push({p:i,r:[PW/2-sw/2-4,22,PW/2+sw/2+4,36],d:1})}}
+if(cnt.length){y+=(mt.length?0:20);blk(cnt.join('   ·   '),M,y,CW,9,{c:C.mu})}
+const N=pgs.length;for(let i=1;i<N;i++){cur=i;tx('LENNOUILLE',M,32,7.5,{b:1,c:C.bl});txr('Audit UX'+(nm?' · '+nm:''),PW-M,32,7.5,{c:C.lt});ln(M,40,PW-M,40,C.bd,.6);ln(M,PH-42,PW-M,PH-42,C.bd,.6);tx('Rapport d’audit UX · '+dt,M,PH-28,7.5,{c:C.lt});txr('Page '+(i+1)+' / '+N,PW-M,PH-28,7.5,{b:1,c:C.mu});if(i>T){const sw=wd('Sommaire',7.5,1);txc('Sommaire',PW/2,PH-28,7.5,{b:1,c:C.bl});anns.push({p:i,r:[PW/2-sw/2-4,22,PW/2+sw/2+4,36],d:1})}}
 let out='%PDF-1.4\n';const off=[],put=s=>{off.push(out.length);out+=off.length+' 0 obj\n'+s+'\nendobj\n'};
 put('<</Type/Catalog/Pages 2 0 R>>');put('<</Type/Pages/Kids['+pgs.map((_,i)=>(6+2*i)+' 0 R').join(' ')+']/Count '+N+'>>');
 put('<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>');put('<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>');
@@ -182,15 +186,15 @@ const blob=new Blob([bytes],{type:'application/pdf'}),name='audit-ux-'+new Date(
 if(dl)await dl.save({filename:name,data:blob});
 else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
 st.textContent='PDF prêt'
-}catch(e){if(e&&e.code=='declined'){st.textContent='Export annulé';return}console.error(e);st.textContent='Échec du PDF, impression…';print()}
+}catch(e){if(e&&e.code=='declined'){st.textContent='Export annulé';return}console.error(e);st.textContent='Échec du PDF, impression…';let ps=document.getElementById('pgstyle');if(!ps){ps=document.createElement('style');ps.id='pgstyle';document.head.appendChild(ps)}ps.textContent='@page{size:A4 '+(S.or=='l'?'landscape':'portrait')+'}';print()}
 }
 const EXG=[['Analyse UX',[['persona','Persona']]],['À propos',[['about','À propos du persona']]],['Benchmarking',[['conc','Concurrents'],['cmp','Tableau comparatif'],['swot','Matrice SWOT'],['pestel','Matrice PESTEL'],['porter','Les 5 forces de Porter'],['seo','Audit SEO'],['co','Audit Contenu'],['ux','Audit UX']]],['Outils annexes',[['map','Sitemap'],['q','Questionnaire']]]];
 const EXK=EXG.flatMap(g=>g[1].map(x=>x[0])),ex=()=>S.ex||(S.ex=EXK.slice());
 function exSync(){const n=ex().length;$('#exn').textContent=n+' / '+EXK.length+' sélectionné(s)';$('#exall').textContent=n==EXK.length?'Tout désélectionner':'Tout sélectionner';$('#exgo').disabled=!n}
 function exRender(){const e=ex();$('#exb').innerHTML=EXG.map(([g,l])=>`<fieldset><legend>${g}</legend>${l.map(([k,t])=>`<label class="ck"><input type="checkbox" data-e="${k}"${e.includes(k)?' checked':''}><span>${t}</span></label>`).join('')}</fieldset>`).join('');exSync()}
-function openEx(){exRender();$('#ex').showModal()}
+function openEx(){exRender();document.querySelectorAll('input[name=or]').forEach(r=>r.checked=r.value==(S.or||'p'));$('#ex').showModal()}
 function exAct(a){const d=$('#ex');if(a=='cancel')return d.close();if(a=='all'){S.ex=ex().length==EXK.length?[]:EXK.slice();save();return exRender()}if(a=='go'){const k=ex().slice();d.close();exportPDF(k)}}
-document.addEventListener('change',e=>{const k=e.target.dataset&&e.target.dataset.e;if(!k)return;const a=ex();S.ex=e.target.checked?(a.includes(k)?a:[...a,k]):a.filter(x=>x!=k);save();exSync()});
+document.addEventListener('change',e=>{if(e.target.name=='or'){S.or=e.target.value=='l'?'l':'p';save();return}const k=e.target.dataset&&e.target.dataset.e;if(!k)return;const a=ex();S.ex=e.target.checked?(a.includes(k)?a:[...a,k]):a.filter(x=>x!=k);save();exSync()});
 $('#ex').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.close()});
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
 if('p' in b.dataset)return openEx();if(b.dataset.x)return exAct(b.dataset.x);if(b.dataset.s)return show(b.dataset.s);
