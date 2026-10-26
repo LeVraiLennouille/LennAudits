@@ -1,3 +1,4 @@
+@font-face {font-family: "Syne";src: url("assets/Syne.ttf") format("truetype");}
 :root{--Primary:#28A745;--PrimaryRGB:40,167,69;--DarkPrimary:#1E7E34;--Charcoal:#1c1c1e;--Success:#22c55e;--Danger:#e53e3e;
 --Bg:#e8e2d8;--Card:#fff;--Tx:#1c1c1e;--Mu:#3B3B3B;--MinMuted:#777;--Borders:#d4cdc4;--Link:#1E7E34;--Soft:rgba(40,167,69,.2);--Hero:#1c1c1e;--Shadow:0 4px 24px rgba(0,0,0,.06);
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
