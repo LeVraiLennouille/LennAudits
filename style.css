@@ -75,7 +75,7 @@ input:is([type=checkbox],[type=radio]){accent-color:var(--Primary)}
 
 /* ---------- En-tête de page ---------- */
 .Eyebrow{display:block;font-size:.82rem;font-weight:800;text-transform:uppercase;color:var(--Link);margin-bottom:12px}
-.MainTitle{margin:0;font-size:clamp(1.8rem,3.6vw,2.6rem);font-weight:800;line-height:1.15}
+.MainTitle{margin:0;font-size:clamp(1.8rem,3.6vw,2.6rem);font-weight:800;line-height:1.15;overflow-wrap:break-word;hyphens:auto}
 .MainDesc{margin:12px 0 0;color:var(--Mu);max-width:60ch}
 .PageHead,.SectionTitle{margin:0 0 32px;text-align:left}
 .PageHead{max-width:720px}
@@ -87,7 +87,7 @@ input:is([type=checkbox],[type=radio]){accent-color:var(--Primary)}
 .card,.Card{padding:var(--CardPad);background:var(--Card);border:1px solid var(--Borders);border-radius:var(--R);box-shadow:var(--Shadow)}
 
 /* ---------- Boutons (pilules) ---------- */
-.btn,.BtnSolid,.ArrowBtn,.BtnMain,.btn-ghost,.Ghost,.BtnGhost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border:1.5px solid transparent;border-radius:var(--Pill);font:inherit;font-size:.95rem;font-weight:800;line-height:1.1;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background-color .3s,color .3s,box-shadow .3s,border-color .15s}
+.btn,.BtnSolid,.ArrowBtn,.BtnMain,.btn-ghost,.Ghost,.BtnGhost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border:1.5px solid transparent;border-radius:var(--Pill);font:inherit;font-size:.95rem;font-weight:800;line-height:1.1;white-space:nowrap;max-width:100%;text-decoration:none;cursor:pointer;transition:background-color .3s,color .3s,box-shadow .3s,border-color .15s}
 .btn-accent,.BtnSolid,.ArrowBtn,.BtnMain{background:var(--Primary);color:#fff;border-color:var(--Primary)}
 .btn-accent:hover,.BtnSolid:hover,.ArrowBtn:hover,.BtnMain:hover{background:#fff;color:var(--DarkPrimary);box-shadow:0 8px 20px rgba(var(--PrimaryRGB),.3)}
 .btn-ghost,.Ghost,.BtnGhost{background:transparent;color:var(--Mu);border-color:var(--Borders);font-weight:500}
@@ -127,7 +127,7 @@ input[type=range]::-moz-range-thumb{width:34px;height:16px;border-radius:99px;ba
 /* ---------- Fenêtres modales ---------- */
 .Overlay{position:fixed;inset:0;z-index:1400;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--Scrim)}
 .Modal{padding:28px;border:1px solid var(--Borders);border-radius:var(--R);background:var(--Card);color:var(--Tx);box-shadow:var(--ShadowModal)}
-dialog.Modal{width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:hidden}
+dialog.Modal{width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 48px);max-height:calc(100dvh - 32px);overflow:hidden}
 dialog.Modal[open]{display:flex;flex-direction:column}
 dialog.Modal::backdrop{background:var(--Scrim)}
 
@@ -176,6 +176,11 @@ dialog.Modal::backdrop{background:var(--Scrim)}
   .workspace{padding:20px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
   .PageHead,.SectionTitle{margin-bottom:22px}
   .Input,.num,.text-input,select,textarea,input:where(:not([type]),[type=text],[type=email],[type=number],[type=search],[type=url],[type=tel],[type=password],[type=date],[type=time]){font-size:16px}
+}
+@media(max-width:560px){
+  .Modal{padding:20px}
+  .MainTitle{font-size:clamp(1.2rem,6.2vw,1.8rem)}
+  .btn,.BtnSolid,.ArrowBtn,.BtnMain,.btn-ghost,.Ghost,.BtnGhost{white-space:normal;text-align:center}
 }
 @media(pointer:coarse){
   .btn,.BtnSolid,.ArrowBtn,.BtnMain,.btn-ghost,.Ghost,.BtnGhost,.rail-btn{min-height:44px}
@@ -239,6 +244,24 @@ main{display:block}
 :where(.Body) button:not([class]){padding:8px 18px;border:1px solid var(--Borders);background:transparent;color:var(--Mu);border-radius:999px;font-weight:500;transition:all .15s}
 :where(.Body) button:not([class]):hover{border-color:var(--Primary);color:var(--Link);background:var(--Soft)}
 .row button,td button{padding:6px 12px}
+@media(max-width:560px){
+  .row{flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .row>input,.row select{flex:1 1 100%;width:100%;min-width:0}
+  .row>button{flex:none}
+  .row>button:last-child{margin-left:auto}
+  .row:has(>select){display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:8px}
+  .row:has(>select)>input:first-child{grid-column:1/-1}
+  .row:has(>select)>select{grid-column:1;grid-row:2;width:100%}
+  .row:has(>select)>button{grid-column:2;grid-row:2;margin:0}
+  .row:has(>select)>input:nth-of-type(2){grid-column:1/-1;grid-row:3}
+}
+@media(pointer:coarse){
+  .row button,td button,.nt .x{min-width:44px;min-height:44px}
+  .nt .x{top:0;right:0}
+  .nt .tg button{min-height:36px;padding:6px 12px}
+  .nt input,.nt textarea{min-height:40px}
+  .StepList .Link{padding:10px 0}
+}
 .Link{display:inline-flex;gap:6px;align-self:flex-start;border:0;background:none;padding:0;color:var(--Link);font-weight:700}
 .Card{position:relative;display:flex;flex-direction:column;gap:14px;transition:transform .3s,box-shadow .3s}
 .Card:hover{transform:translateY(-4px);box-shadow:var(--ShadowHover)}
@@ -246,16 +269,17 @@ main{display:block}
 .Card>p{flex:1;font-size:.95rem;color:var(--Mu)}
 .Offer .Link::after{content:"";position:absolute;inset:0;z-index:1}
 .OfferGrid,.StatsGrid{display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.StatsGrid{gap:20px}
+.StatsGrid{gap:20px;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:700px){.StatsGrid{grid-template-columns:1fr}}
 .Badge{align-self:flex-start}
 .Stat{overflow:hidden}
 .Deco{position:absolute;top:0;right:0;width:68px;height:68px;background:linear-gradient(135deg,var(--Primary),var(--DarkPrimary));border-radius:0 20px 0 100%}
 .Number{font-size:clamp(2rem,3vw,2.6rem);font-weight:900;line-height:1;color:var(--Link)}
 .StatLabel{font-weight:800}
 .StepList{list-style:none;counter-reset:step;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px}
-.StepList li{counter-increment:step;border-top:2px solid var(--Primary);padding-top:18px;display:flex;flex-direction:column;gap:8px}
+.StepList li{min-width:0;counter-increment:step;border-top:2px solid var(--Primary);padding-top:18px;display:flex;flex-direction:column;gap:8px}
 .StepList li::before{content:counter(step);font-size:2.6rem;font-weight:800;line-height:1;color:transparent;-webkit-text-stroke:1.5px var(--Primary);margin-bottom:6px}
-.StepList h3{font-size:1.15rem;margin:0}
+.StepList h3{font-size:1.15rem;margin:0;overflow-wrap:break-word;hyphens:auto}
 .StepList p{font-size:.92rem;color:var(--Mu);flex:1}
 .CityFAQ{max-width:900px;margin-inline:auto}
 .FAQList{display:flex;flex-direction:column;gap:12px}
@@ -332,5 +356,13 @@ details p{padding-bottom:18px;color:var(--Mu);line-height:1.7}
 .Pg.l{width:20px;height:14px}
 @page{size:A4 portrait}
 #ex .ExFm{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ck{min-width:0}
+.ExBar{flex-wrap:wrap;gap:8px}
+@media(max-width:480px){
+  #ex .ExFm,#ex .ExOr{grid-template-columns:1fr}
+  #ex .ExFm .ck span{flex-direction:row;align-items:baseline;gap:8px}
+  .ExFt{flex-wrap:wrap}
+  .ExFt>*{flex:1 1 auto}
+}
 #ex .ExFm .ck span{display:flex;flex-direction:column;line-height:1.25}
 #ex .ck small{font-weight:500;font-size:.72rem;color:var(--MinMuted)}
