@@ -77,7 +77,8 @@ ux:['Ton audit <em>UX</em>','Navigation, hiérarchie, mobile et accessibilité :
 map:['Dessine l’<em>arborescence</em>','Liste les pages du site et organise leurs niveaux.',['Sitemap','Map']],
 q:['Pose les bonnes <em>questions</em>','Structure ton questionnaire de recherche utilisateur.',['Survey','UX']]};
 let CID='dash';
-const page=id=>{CID=id;return `<div class="Body">${R[id]()}</div>`};
+const pager=id=>{const o=[...document.querySelectorAll('.rail-btn[data-s]')].map(b=>b.dataset.s),i=o.indexOf(id),p=o[i-1],n=o[i+1];const b=(k,t)=>k?`<button class="Ghost" data-s="${k}"><small>${t}</small><span>${lab(k)}</span></button>`:'<span></span>';return `<nav class="Pager" aria-label="Navigation entre les sections">${b(p,'← Précédent')}${b(n,'Suivant →')}</nav>`};
+const page=id=>{CID=id;return `<div class="Body">${R[id]()}${pager(id)}</div>`};
 const main=$('#main');let cur;
 const fit=()=>document.querySelectorAll('textarea').forEach(t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px'});
 const show=(id,keep)=>{const y=scrollY;cur=S.cur=id;main.innerHTML=page(id);fit();document.querySelectorAll('.rail-btn').forEach(b=>b.dataset.s==id?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));save();scrollTo(0,keep?y:0)};
