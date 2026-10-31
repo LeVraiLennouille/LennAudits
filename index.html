@@ -3,8 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Un tableau de bord pour piloter ton audit, du persona à la restitution.">
 <meta name="theme-color" content="#28A745">
 <title>Audit UX – Tableau de bord</title>
+<link rel="canonical" href="https://audits.lennouille.fr/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Lenny Gadroy">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lennouille">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Audit UX – Tableau de bord">
+<meta property="og:description" content="Un tableau de bord pour piloter ton audit, du persona à la restitution.">
+<meta property="og:url" content="https://audits.lennouille.fr/">
+<meta property="og:image" content="https://audits.lennouille.fr/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Audit UX – Tableau de bord">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="fonts/Syne.ttf" as="font" type="font/ttf" crossorigin>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"LennAudits","url":"https://audits.lennouille.fr/","description":"Un tableau de bord pour piloter ton audit, du persona à la restitution.","inLanguage":"fr","applicationCategory":"DesignApplication","operatingSystem":"Web","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"author":{"@type":"Person","name":"Lenny Gadroy","url":"https://lennouille.fr/"},"publisher":{"@type":"Organization","name":"Lennouille","url":"https://lennouille.fr/"},"image":"https://audits.lennouille.fr/assets/og.png","alternateName":"Auditeur"}</script>
 <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
 <link rel="stylesheet" href="style.css">
 <script src="theme.js"></script>
@@ -16,17 +34,19 @@
 <nav class="rail" aria-label="Sections de l’audit">
 <button class="rail-brand" data-s="dash"><img class="mark" src="assets/icon.svg" alt="" width="44" height="44"><span class="LogoTx">Auditeur</span></button>
 <ul class="rail-nav"><li><button class="rail-btn" data-s="dash"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span class="lb">Tableau de bord</span></button></li></ul>
-<h4 class="rail-group">Analyse UX</h4>
+<p class="rail-group">Analyse UX</p>
 <ul class="rail-nav"><li><button class="rail-btn" data-s="persona"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg></span><span class="lb">Persona</span></button></li></ul>
-<h4 class="rail-group">À propos</h4>
+<p class="rail-group">À propos</p>
 <ul class="rail-nav"><li><button class="rail-btn" data-s="about"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg></span><span class="lb">Profil détaillé</span></button></li></ul>
-<h4 class="rail-group">Benchmarking</h4>
+<p class="rail-group">Benchmarking</p>
 <ul class="rail-nav"><li><button class="rail-btn" data-s="conc"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20v-1A5.5 5.5 0 0 1 8 13.5h2a5.5 5.5 0 0 1 5.5 5.5v1"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8"/><path d="M18.5 14a5.5 5.5 0 0 1 3 5v1"/></svg></span><span class="lb">Concurrents</span></button></li><li><button class="rail-btn" data-s="swot"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18M3 12h18"/></svg></span><span class="lb">Matrice SWOT</span></button></li><li><button class="rail-btn" data-s="pestel"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg></span><span class="lb">Matrice PESTEL</span></button></li><li><button class="rail-btn" data-s="porter"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8.5 5v9l-8.5 5-8.5-5v-9z"/><path d="M12 12V2.5M12 12l8.5-4.5M12 12l-8.5-4.5"/></svg></span><span class="lb">Les 5 forces de Porter</span></button></li><li><button class="rail-btn" data-s="cmp"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M10 4v16"/></svg></span><span class="lb">Tableau comparatif</span></button></li><li><button class="rail-btn" data-s="seo"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span><span class="lb">Audit SEO</span></button></li><li><button class="rail-btn" data-s="co"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 11h16M4 16h10"/></svg></span><span class="lb">Audit Contenu</span></button></li><li><button class="rail-btn" data-s="ux"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3l7 17 2.5-7.5L21 10z"/></svg></span><span class="lb">Audit UX</span></button></li></ul>
-<h4 class="rail-group">Outils annexes</h4>
+<p class="rail-group">Outils annexes</p>
 <ul class="rail-nav"><li><button class="rail-btn" data-s="map"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-2a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2"/></svg></span><span class="lb">Sitemap</span></button></li><li><button class="rail-btn" data-s="q"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/></svg></span><span class="lb">Questionnaire</span></button></li></ul>
 <div class="rail-end"><span id="st"></span><button class="BtnSolid sm" data-p>Exporter en PDF</button><button class="Ghost" id="rst">Réinitialiser</button></div>
+<a class="rail-credit" href="https://lennouille.fr/" target="_blank" rel="noopener">Lennouille — UI/UX Design</a>
 </nav>
-<main class="workspace" id="main"></main>
+<main class="workspace"><div id="main"><div class="Body"><div class="PageHead"><span class="Eyebrow">Tableau de bord</span><h1 class="MainTitle">Structure ton audit <em>UX</em></h1><p class="MainDesc">Un tableau de bord pour piloter ton audit, du persona à la restitution.</p></div></div></div>
+<footer class="SiteFoot"><a href="https://lennouille.fr/" target="_blank" rel="noopener">lennouille.fr</a><nav aria-label="Autres outils Lennouille"><a href="https://simu.lennouille.fr/" target="_blank" rel="noopener">Simulateur</a><a href="https://outils.lennouille.fr/" target="_blank" rel="noopener">Atelier</a></nav></footer></main>
 </div>
 <dialog id="ex" class="Modal" aria-labelledby="ext"><div class="ExHd"><div><span class="Eyebrow">Export</span><h2 id="ext">Exporter en PDF</h2></div><button class="Ghost" data-x="cancel" aria-label="Fermer">×</button></div>
 <p class="MainDesc">Coche les éléments à inclure dans le PDF.</p>
