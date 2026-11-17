@@ -553,3 +553,31 @@ details p{padding-bottom:18px;color:var(--Mu);line-height:1.7}
   .EvAct,.TplCard,.PrFlt,.x2{display:none!important}
   .EvThumb{display:block!important}
 }
+/* Analyse SEO automatique */
+.SaRow{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:12px}
+.SaRow .f{flex:1 1 280px;margin:0}
+.SaSrc{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.SaSrc .ck{margin:0;flex:1 1 220px}
+.SaCard .ck span{display:grid;gap:2px}
+.SaCard .ck small{font-size:.78rem;font-weight:500;color:var(--MinMuted)}
+.SaKeys{margin:12px 0;padding:0 18px;border:1px solid var(--Borders);box-shadow:none}
+.SaKeys summary{padding:12px 0}
+.SaKeys[open] summary{margin-bottom:4px}
+.SaKeys .g2{margin-bottom:10px}
+.SaKeys textarea{width:100%}
+.SaKeys>.Ghost{margin:0 0 16px}
+.SaLog{list-style:none;margin:10px 0;padding:0;display:grid;gap:6px;font-size:.88rem}
+.SaLog li{display:flex;gap:10px;align-items:baseline}
+.SaLog b{flex:none;width:1.2em;text-align:center}
+.SaLog .ok b{color:var(--OkTx)}.SaLog .ko b,.SaLog .ko{color:var(--DangerTx)}
+.SaStat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0}
+.SaStat div{padding:10px 14px;border:1px solid var(--Borders);border-radius:var(--R3);background:var(--Faint)}
+.SaStat span{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--MinMuted)}
+.SaStat b{font-size:1.2rem}
+.SaCard .Hint a{color:var(--Link)}
+.SaSerp{margin:12px 0;padding:14px 16px;border:1px solid var(--Borders);border-radius:var(--R3);background:var(--Card);max-width:640px}
+.SaSerp small{display:block;color:var(--MinMuted);font-size:.78rem}
+.SaSerp b{display:block;margin:2px 0 4px;font-size:1.05rem;color:var(--Link)}
+.SaSerp p{margin:0;font-size:.85rem;color:var(--Mu)}
+.SaFile{display:inline-flex;align-items:center;cursor:pointer}
+@media print{.SaCard{display:none!important}}

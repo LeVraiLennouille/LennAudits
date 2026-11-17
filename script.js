@@ -40,7 +40,7 @@ const DEF=()=>({p:{},a:{int:[N('')],soc:[N('')],obj:[N('')],inf:[N('')],ach:[N('
 cx:['ADN','UX','Produits','Client ciblé','Engagement RSE'].map(c=>({c,v:{}})),
 cmp:['Nombre d’offres / catalogue','Diversification des services','Atouts stratégiques','Risques / limites','Part de marché'].map(c=>({c,v:{}})),
 au:TA('gen'),nt:{seo:[N('Vitesse et Core Web Vitals'),N('Architecture et URL'),N('Navigation à facettes')],co:[N('Stratégie Top of Funnel (inspiration)'),N('Pages destinations (Middle of Funnel)')],ux:[N('Mobile first')]},
-map:[{t:'Accueil',d:0}],q:[],pr:[],cur:'dash',tpl:'gen'});
+map:[{t:'Accueil',d:0}],q:[],pr:[],cur:'dash',tpl:'gen',sa:{}});
 const PFX='uxaudit.a.',IDX='uxaudit.v2',lsGet=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
 let IX=lsGet(IDX);
 if(!IX||!Array.isArray(IX.list)||!IX.list.length){const old=lsGet(KEY),id=uid();IX={cur:id,list:[{id,name:'Audit 1',c:Date.now(),u:Date.now()}]};try{if(old)localStorage.setItem(PFX+id,JSON.stringify(old));localStorage.setItem(IDX,JSON.stringify(IX))}catch(e){}}
