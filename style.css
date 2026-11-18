@@ -580,4 +580,25 @@ details p{padding-bottom:18px;color:var(--Mu);line-height:1.7}
 .SaSerp b{display:block;margin:2px 0 4px;font-size:1.05rem;color:var(--Link)}
 .SaSerp p{margin:0;font-size:.85rem;color:var(--Mu)}
 .SaFile{display:inline-flex;align-items:center;cursor:pointer}
+/* Personnalité de marque */
+.BpGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px;margin-bottom:24px}
+.BpQ{display:grid;gap:14px;align-content:start}
+.BpQ h3{display:flex;gap:10px;align-items:baseline;margin:0;font-size:1rem;font-weight:600}
+.BpQ h3 small{flex:none;color:var(--MinMuted);font-weight:700;font-size:.8rem}
+.BpRow{display:grid;grid-template-columns:minmax(64px,auto) minmax(0,1fr) minmax(64px,auto);gap:14px;align-items:center;font-size:.85rem}
+.BpRow>span:last-child{text-align:right}
+.BpTrack{position:relative;color:var(--Tx)}
+.BpTrack i{position:absolute;left:17px;right:17px;top:50%;height:7px;margin-top:-3px;pointer-events:none;background:linear-gradient(currentColor,currentColor) 0% 0/1px 100% no-repeat,linear-gradient(currentColor,currentColor) 20% 0/1px 100% no-repeat,linear-gradient(currentColor,currentColor) 40% 0/1px 100% no-repeat,linear-gradient(currentColor,currentColor) 60% 0/1px 100% no-repeat,linear-gradient(currentColor,currentColor) 80% 0/1px 100% no-repeat,linear-gradient(currentColor,currentColor) 100% 0/1px 100% no-repeat}
+.BpTrack input{position:relative;z-index:1}
+.BpTrack input.na::-webkit-slider-thumb{opacity:.4}
+.BpTrack input.na::-moz-range-thumb{opacity:.4}
+.BpVal{margin:0;text-align:center;font-size:.85rem;color:var(--MinMuted)}
+.BpRes{display:grid;grid-template-columns:minmax(0,480px) minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:start;margin-bottom:24px}
+.BpProfile .Acts{margin:12px 0}
+.BpTr article{padding:0 0 22px;margin:0 0 22px;border-bottom:1px solid var(--Borders)}
+.BpTr article:last-child{border:0;margin:0;padding:0}
+.BpTr h3{margin:0 0 10px;font-size:1.25rem;font-weight:600}
+.BpTr p{margin:0 0 10px;font-size:.92rem}
+.BpTr .mu{color:var(--MinMuted)}
+@media (max-width:860px){.BpRes{grid-template-columns:minmax(0,1fr)}}
 @media print{.SaCard{display:none!important}}
