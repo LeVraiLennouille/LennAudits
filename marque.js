@@ -1,5 +1,6 @@
 /* ---- Personnalité de marque : 6 curseurs, radar, traits dominants, ton de voix ----
-   Les réponses sont dans S.bp {s0..s5 : 0 à 5, x : observations}. Une valeur absente = curseur non évalué.
+   Les réponses sont dans S.bp : s0..s5 = marque perçue, w0..w5 = marque voulue, c<idConcurrent>_0..5 = concurrents (valeurs 0 à 5), x = observations.
+   Une valeur absente = curseur non évalué.
    0, 1, 2 penchent vers le pôle de gauche (l), 3, 4, 5 vers celui de droite (r) : pas de position neutre.
    Textes des profils : PR[axe][0 = pôle gauche, 1 = pôle droit] -> {h titre, a archétype, d description, p positionnement, t ton de voix}.
    Ce fichier est chargé avant script.js : tout ce qui vient de script.js (S, save, sec, L, T, esc…) n'est lu qu'à l'appel. */
@@ -25,56 +26,81 @@ const PR=[
 [{h:'Une marque ouverte à tous',a:'Le Citoyen',d:'La marque parle à tout le monde, sans barrière d’entrée. Elle mise sur l’accessibilité, la simplicité d’usage et le sentiment d’appartenance.',p:'Accessibilité, proximité, appartenance. La marque occupe un espace où chacun peut se sentir à sa place, sans avoir à prouver quoi que ce soit.',t:'Simple, direct, inclusif. On emploie le « on » et le « nous », des mots du quotidien et des exemples concrets. On évite le jargon et tout ce qui crée de la distance.'},
  {h:'Un accès qui se mérite',a:'L’Amoureux',d:'La marque cultive la rareté, le raffinement et le désir. Elle s’adresse à un cercle choisi et soigne chaque détail de l’expérience.',p:'Rareté, raffinement, désir. La marque attire ceux qui veulent se distinguer et accordent de la valeur à l’intimité et au sur-mesure.',t:'Soigné, sensuel, mesuré. On suggère plutôt qu’on explique, on choisit chaque mot et on laisse de la place au silence. On évite les promotions criardes et la familiarité.'}]];
 const LV=['Très ','Assez ','Plutôt ','Plutôt ','Assez ','Très '];
-const val=i=>{const v=S.bp&&S.bp['s'+i];return v===undefined||v===null||v===''||isNaN(+v)?null:Math.max(0,Math.min(5,Math.round(+v)))};
+let MODE='p';
+const MK=(m,i)=>m=='p'?'s'+i:m=='w'?'w'+i:'c'+m+'_'+i;
+const val=(i,m)=>{const v=S.bp&&S.bp[MK(m||'p',i)];return v===undefined||v===null||v===''||isNaN(+v)?null:Math.max(0,Math.min(5,Math.round(+v)))};
 const lvl=(i,v)=>v==null?'Non évalué':LV[v]+AX[i][v<3?'l':'r'].toLowerCase();
-const n=()=>AX.filter((_,i)=>val(i)!=null).length;
+const n=m=>AX.filter((_,i)=>val(i,m||'p')!=null).length;
+/* Profils : perçue, voulue, puis les concurrents saisis dans la section Concurrents */
+const modes=()=>[{id:'p',n:'Perçue',k:'rd'},{id:'w',n:'Voulue',k:'rw'},...(S.conc||[]).filter(x=>(x.n||x.u||'').trim()).map((x,j)=>({id:x.id,n:(x.n||x.u).trim(),k:'rc'+(j%4)}))];
+const cur0=()=>{if(!modes().some(x=>x.id==MODE))MODE='p';return MODE};
+const mname=m=>(modes().find(x=>x.id==m)||{n:''}).n;
 /* Traits dominants : les deux curseurs les plus éloignés du centre (égalité : ordre des questions) */
-const dom=()=>AX.map((_,i)=>({i,v:val(i)})).filter(x=>x.v!=null).map(x=>({...x,e:Math.abs(x.v-2.5)})).sort((a,b)=>b.e-a.e||a.i-b.i).slice(0,2).map(x=>({...PR[x.i][x.v<3?0:1],i:x.i,v:x.v,pole:AX[x.i][x.v<3?'l':'r']}));
+const dom=m=>AX.map((_,i)=>({i,v:val(i,m)})).filter(x=>x.v!=null).map(x=>({...x,e:Math.abs(x.v-2.5)})).sort((a,b)=>b.e-a.e||a.i-b.i).slice(0,2).map(x=>({...PR[x.i][x.v<3?0:1],i:x.i,v:x.v,pole:AX[x.i][x.v<3?'l':'r']}));
 /* Axe du radar : 1 = pôle de gauche au maximum, 0,1 = pôle de droite au maximum, 0,5 si non évalué */
-const fr=i=>{const v=val(i);return v==null?.5:.1+.9*(5-v)/5};
+const fr=(i,m)=>{const v=val(i,m);return v==null?.5:.1+.9*(5-v)/5};
+/* Écart voulue / perçue : axes évalués dans les deux profils, en crans (0 à 5) */
+const gap=()=>{const r=AX.map((_,i)=>({i,p:val(i,'p'),w:val(i,'w')})).filter(x=>x.p!=null&&x.w!=null).map(x=>({...x,d:x.p-x.w}));if(!r.length)return null;const avg=r.reduce((s,x)=>s+Math.abs(x.d),0)/r.length,pct=Math.round(100-avg/5*100);return{rows:r,pct,txt:pct>=80?'Cohérence forte':pct>=60?'Écarts modérés':'Écarts marqués'}};
+const dTxt=x=>x.d==0?'Aucun écart':Math.abs(x.d)+' cran'+(Math.abs(x.d)>1?'s':'')+' vers « '+AX[x.i][x.d>0?'r':'l']+' »';
+/* Registre attendu pour le texte (tu ou vous) : profil voulu s'il existe, sinon perçu */
+const register=()=>{const m=n('w')?'w':'p',L2=i=>{const v=val(i,m);return v!=null&&v<3},R2=i=>{const v=val(i,m);return v!=null&&v>=3},tu=L2(0)+L2(3)+L2(5),vous=R2(3)+R2(5)+R2(4);return tu>=2&&tu>vous?'tu':vous>=2&&vous>tu?'vous':''};
 
 function rad(){
 const cx=160,cy=150,R0=92,A=AX.map((_,i)=>(-90+i*60)*Math.PI/180),P=(i,r)=>[cx+Math.cos(A[i])*r,cy+Math.sin(A[i])*r],n1=p=>p.map(x=>x.toFixed(1)).join(','),pts=r=>AX.map((_,i)=>n1(P(i,r))).join(' ');
-const dp=AX.map((_,i)=>P(i,R0*fr(i))),top=cy-R0-40,bot=cy+R0*Math.max(...A.map(Math.sin))+54;
-return `<svg class="Radar" viewBox="-50 ${top} 430 ${bot-top}" role="img" aria-label="Radar de personnalité de marque : ${AX.map((a,i)=>a.l+'/'+a.r+' '+lvl(i,val(i))).join(', ')}">${[25,50,75,100].map(g=>`<polygon class="rg" points="${pts(R0*g/100)}"/>`).join('')}${AX.map((_,i)=>{const p=P(i,R0);return `<line class="rg" x1="${cx}" y1="${cy}" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}"/>`}).join('')}${n()?`<polygon class="rd" points="${dp.map(n1).join(' ')}"/>${dp.map(p=>`<circle class="rp" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4"/>`).join('')}`:''}${AX.map((a,i)=>{const p=P(i,R0+22),co=Math.cos(A[i]),si=Math.sin(A[i]),an=Math.abs(co)<.25?'middle':co>0?'start':'end';return `<text class="rl" x="${p[0].toFixed(1)}" y="${(p[1]+(si>.25?6:si<-.25?-14:4)).toFixed(1)}" text-anchor="${an}">${esc(a.l)}<tspan class="rv" x="${p[0].toFixed(1)}" dy="14">↔ ${esc(a.r)}</tspan></text>`}).join('')}</svg>`}
+const top=cy-R0-40,bot=cy+R0*Math.max(...A.map(Math.sin))+54,ms=modes().filter(x=>n(x.id)),sel=cur0();
+const draw=x=>{const dp=AX.map((_,i)=>P(i,R0*fr(i,x.id)));return x.id=='p'?`<polygon class="rd" points="${dp.map(n1).join(' ')}"/>${dp.map(p=>`<circle class="rp" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4"/>`).join('')}`:`<polygon class="rx ${x.k}${x.id==sel?' sel':''}" points="${dp.map(n1).join(' ')}"/>${dp.map(p=>`<circle class="rq ${x.k}" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5"/>`).join('')}`};
+const order=[...ms.filter(x=>x.id!='p'&&x.id!='w'),...ms.filter(x=>x.id=='w'),...ms.filter(x=>x.id=='p')];
+return `<svg class="Radar" viewBox="-50 ${top} 430 ${bot-top}" role="img" aria-label="Radar de personnalité de marque : ${AX.map((a,i)=>a.l+'/'+a.r+' '+lvl(i,val(i,sel))).join(', ')}">${[25,50,75,100].map(g=>`<polygon class="rg" points="${pts(R0*g/100)}"/>`).join('')}${AX.map((_,i)=>{const p=P(i,R0);return `<line class="rg" x1="${cx}" y1="${cy}" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}"/>`}).join('')}${order.map(draw).join('')}${AX.map((a,i)=>{const p=P(i,R0+22),co=Math.cos(A[i]),si=Math.sin(A[i]),an=Math.abs(co)<.25?'middle':co>0?'start':'end';return `<text class="rl" x="${p[0].toFixed(1)}" y="${(p[1]+(si>.25?6:si<-.25?-14:4)).toFixed(1)}" text-anchor="${an}">${esc(a.l)}<tspan class="rv" x="${p[0].toFixed(1)}" dy="14">↔ ${esc(a.r)}</tspan></text>`}).join('')}</svg><p class="BpLeg">${ms.map(x=>`<span class="BpKey ${x.k}">${esc(x.n)}</span>`).join('')}</p>`}
 
-const res=()=>{const d=dom(),k=n();
-return `<div class="BpRes"><section class="card BpProfile"><h3>Profil de marque</h3><p class="Hint">${d.length?'Traits dominants : '+d.map(x=>esc(x.pole)).join(' et '):'Place au moins un curseur pour faire apparaître le profil.'}</p>${rad()}<div class="Acts"><button class="Ghost" data-bpa="cst"${d.length?'':' disabled'}>Ajouter aux constats du contenu</button><button class="Ghost" data-bpa="reset"${k?'':' disabled'}>Réinitialiser les curseurs</button></div><p class="Hint">Bouge un curseur : le profil se met à jour.</p></section>
-<div class="BpTr"><span class="Eyebrow">Traits dominants</span>${d.length?d.map(x=>`<article><h3>${esc(x.h)}</h3><p><b>Archétype :</b> ${esc(x.a)}</p><p class="mu">${esc(x.d)}</p><p><b>Positionnement :</b> <span class="mu">${esc(x.p)}</span></p><p><b>Ton de voix :</b> <span class="mu">${esc(x.t)}</span></p></article>`).join(''):'<p class="Empty">Les archétypes, le positionnement et le ton de voix s’affichent dès qu’un curseur est placé.</p>'}</div></div>`};
+const gapHTML=()=>{const g=gap();if(!g)return'';
+return `<section class="card BpGap"><h3>Écart entre personnalité voulue et perçue</h3><p class="Hint"><b>${g.pct} %</b> de cohérence sur ${g.rows.length} axe${g.rows.length>1?'s':''} comparé${g.rows.length>1?'s':''} · ${g.txt}</p><div class="scr"><table class="tb"><thead><tr><th>Axe</th><th>Voulue</th><th>Perçue</th><th>Écart</th></tr></thead><tbody>${g.rows.map(x=>`<tr><td>${esc(AX[x.i].l)} / ${esc(AX[x.i].r)}</td><td>${esc(lvl(x.i,x.w))}</td><td>${esc(lvl(x.i,x.p))}</td><td>${esc(dTxt(x))}</td></tr>`).join('')}</tbody></table></div></section>`};
 
-const card=(a,i)=>{const v=val(i),na=v==null,t=lvl(i,v);
+const res=()=>{const m=cur0(),d=dom(m),k=n(m);
+return `<div class="BpRes"><section class="card BpProfile"><h3>Profil de marque</h3><p class="Hint">${d.length?'Traits dominants · '+esc(mname(m))+' : '+d.map(x=>esc(x.pole)).join(' et '):'Place au moins un curseur pour faire apparaître le profil.'}</p>${rad()}<div class="Acts"><button class="Ghost" data-bpa="cst"${n('p')?'':' disabled'}>Ajouter aux constats du contenu</button><button class="Ghost" data-bpa="reset"${k?'':' disabled'}>Réinitialiser ce profil</button></div><p class="Hint">Bouge un curseur : le profil se met à jour.</p></section>
+<div class="BpTr"><span class="Eyebrow">Traits dominants · ${esc(mname(m))}</span>${d.length?d.map(x=>`<article><h3>${esc(x.h)}</h3><p><b>Archétype :</b> ${esc(x.a)}</p><p class="mu">${esc(x.d)}</p><p><b>Positionnement :</b> <span class="mu">${esc(x.p)}</span></p><p><b>Ton de voix :</b> <span class="mu">${esc(x.t)}</span></p></article>`).join(''):'<p class="Empty">Les archétypes, le positionnement et le ton de voix s’affichent dès qu’un curseur est placé.</p>'}</div></div>${gapHTML()}`};
+
+const card=(a,i)=>{const m=cur0(),v=val(i,m),na=v==null,t=lvl(i,v);
 return `<div class="card BpQ"><h3><small>${String(i+1).padStart(2,'0')}</small>${esc(a.q)}</h3><div class="BpRow"><span>${esc(a.l)}</span><div class="BpTrack"><i aria-hidden="true"></i><input type="range" min="0" max="5" step="1" value="${na?2:v}"${na?' class="na"':''} data-bp="${i}" aria-label="${esc(a.q)}" aria-valuetext="${esc(t)}"></div><span>${esc(a.r)}</span></div><p class="BpVal" id="bpv${i}">${esc(t)}</p></div>`};
+const HINT={p:'ce que le site dégage aujourd’hui.',w:'le positionnement que la marque cherche à exprimer.',c:'le positionnement perçu de ce concurrent.'};
 
-function page(){return sec('Personnalité de marque','Situe la marque sur six curseurs : le radar, l’archétype et le ton de voix s’en déduisent.',`<div class="BpGrid">${AX.map(card).join('')}</div><div id="bpOut">${res()}</div><div class="card"><h3>Observations</h3>${L('Cohérence entre la personnalité perçue et celle que la marque vise',T('bp.x','Éléments du site qui confirment ou contredisent ce profil…',4))}</div>`)}
+function page(){const m=cur0();return sec('Personnalité de marque','Situe la marque sur six curseurs : le radar, l’archétype et le ton de voix s’en déduisent. Compare ce qu’elle veut être à ce qu’elle paraît.',`<div class="BpTabs" role="group" aria-label="Profil évalué">${modes().map(x=>`<button class="Ghost${x.id==m?' on':''}" aria-pressed="${x.id==m}" data-bpm="${esc(x.id)}">${esc(x.n)}${n(x.id)?' · '+n(x.id)+'/6':''}</button>`).join('')}</div><p class="Hint BpMode">Profil évalué : <b>${esc(mname(m))}</b>, ${HINT[m=='p'||m=='w'?m:'c']}</p><div class="BpGrid">${AX.map(card).join('')}</div><div id="bpOut">${res()}</div><div class="card"><h3>Observations</h3>${L('Cohérence entre la personnalité perçue et celle que la marque vise',T('bp.x','Éléments du site qui confirment ou contredisent ce profil…',4))}</div>`)}
 
-const setv=(i,v,t)=>{if(!S.bp||typeof S.bp!='object'||Array.isArray(S.bp))S.bp={};S.bp['s'+i]=v;save();if(t){t.classList.remove('na');t.setAttribute('aria-valuetext',lvl(i,v))}const l=document.getElementById('bpv'+i);if(l)l.textContent=lvl(i,v);const o=document.getElementById('bpOut');if(o)o.innerHTML=res()};
+const setv=(i,v,t)=>{if(!S.bp||typeof S.bp!='object'||Array.isArray(S.bp))S.bp={};S.bp[MK(cur0(),i)]=v;save();if(t){t.classList.remove('na');t.setAttribute('aria-valuetext',lvl(i,v))}const l=document.getElementById('bpv'+i);if(l)l.textContent=lvl(i,v);const o=document.getElementById('bpOut');if(o)o.innerHTML=res()};
 document.addEventListener('input',e=>{const t=e.target;if(t.type!='range'||!t.dataset||t.dataset.bp===undefined)return;setv(+t.dataset.bp,+t.value,t)});
 /* Un clic sur le curseur sans le déplacer ne déclenche pas « input » : on valide la position affichée */
-document.addEventListener('pointerup',e=>{const t=e.target;if(!t||t.type!='range'||!t.dataset||t.dataset.bp===undefined)return;const i=+t.dataset.bp;if(val(i)==null)setv(i,+t.value,t)});
-document.addEventListener('click',e=>{const b=e.target.closest('button[data-bpa]');if(!b)return;const a=b.dataset.bpa;
-if(a=='reset'){AX.forEach((_,i)=>delete S.bp['s'+i]);save();return show(cur,1)}
-if(a=='cst'){const d=dom();if(!d.length)return;const t='Personnalité de marque : '+d.map(x=>x.pole.toLowerCase()).join(' et '),
-x='Observation : profil de marque évalué sur six curseurs. Traits dominants : '+d.map(z=>z.pole.toLowerCase()+' ('+z.a+')').join(' et ')+'. Ton de voix attendu : '+d[0].t.split('. ')[0].toLowerCase()+'.',nt=S.nt.co;
-const had=nt.find(z=>nz(z.t)==nz(t));if(had)had.x=x;else{const e=nt.find(z=>!nz(z.t)&&!nz(z.x));if(e){e.t=t;e.x=x}else nt.push({t,x})}
+document.addEventListener('pointerup',e=>{const t=e.target;if(!t||t.type!='range'||!t.dataset||t.dataset.bp===undefined)return;const i=+t.dataset.bp;if(val(i,cur0())==null)setv(i,+t.value,t)});
+document.addEventListener('click',e=>{
+const tb=e.target.closest('button[data-bpm]');if(tb){MODE=tb.dataset.bpm;return show(cur,1)}
+const b=e.target.closest('button[data-bpa]');if(!b)return;const a=b.dataset.bpa;
+if(a=='reset'){const m=cur0();AX.forEach((_,i)=>delete S.bp[MK(m,i)]);save();return show(cur,1)}
+if(a=='cst'){const d=dom('p'),nt=S.nt.co,put=(t,x)=>{const had=nt.find(z=>nz(z.t)==nz(t));if(had)had.x=x;else{const e=nt.find(z=>!nz(z.t)&&!nz(z.x));if(e){e.t=t;e.x=x}else nt.push({t,x})}return !!had};
+if(!d.length)return;let had=put('Personnalité de marque : '+d.map(x=>x.pole.toLowerCase()).join(' et '),'Observation : profil de marque évalué sur six curseurs. Traits dominants : '+d.map(z=>z.pole.toLowerCase()+' ('+z.a+')').join(' et ')+'. Ton de voix attendu : '+d[0].t.split('. ')[0].toLowerCase()+'.');
+const g=gap();if(g){const big=g.rows.filter(x=>Math.abs(x.d)>=2);put('Écart entre personnalité voulue et perçue','Observation : cohérence de '+g.pct+' % sur '+g.rows.length+' axe(s) comparé(s). '+(big.length?'Écarts d’au moins 2 crans : '+big.map(x=>AX[x.i].l+' / '+AX[x.i].r+' (voulue : '+lvl(x.i,x.w).toLowerCase()+', perçue : '+lvl(x.i,x.p).toLowerCase()+')').join(' ; ')+'.':'Aucun écart d’au moins 2 crans.'))}
 save();b.textContent=had?'Constat mis à jour ✓':'Constat ajouté ✓';setTimeout(()=>{if(b.isConnected)b.textContent='Ajouter aux constats du contenu'},2500)}});
 
 /* Section du PDF : c = helpers de exportPDF (y est lu et écrit via c.y) */
 function pdf(c){const{sect,need,tx,txc,txr,blk,hg,box,circ,ln,poly,table,empty,gc,C,G,M,CW}=c;
-sect('bp','Personnalité de marque');if(!n()){empty('Aucun curseur évalué.');return}
-need(250);const R0=78,cx0=M+CW/2,cy0=c.y+R0+28,A=AX.map((_,i)=>(-90+i*60)*Math.PI/180),pt=(i,r)=>[cx0+Math.cos(A[i])*r,cy0+Math.sin(A[i])*r];
+sect('bp','Personnalité de marque');if(!modes().some(x=>n(x.id))){empty('Aucun curseur évalué.');return}
+need(270);const R0=78,cx0=M+CW/2,cy0=c.y+R0+28,A=AX.map((_,i)=>(-90+i*60)*Math.PI/180),pt=(i,r)=>[cx0+Math.cos(A[i])*r,cy0+Math.sin(A[i])*r];
 [.25,.5,.75,1].forEach(g=>{for(let i=0;i<6;i++){const a=pt(i,R0*g),b=pt((i+1)%6,R0*g);ln(a[0],a[1],b[0],b[1],C.bd,.7)}});
 AX.forEach((_,i)=>{const p=pt(i,R0);ln(cx0,cy0,p[0],p[1],C.bd,.7)});
-const dp=AX.map((_,i)=>pt(i,R0*fr(i)));poly(dp,C.soft);dp.forEach((p,i)=>{const q=dp[(i+1)%6];ln(p[0],p[1],q[0],q[1],C.bl,1.6)});dp.forEach((p,i)=>circ(p[0],p[1],3,{f:val(i)==null?C.lt:C.bl}));
+const ms=modes().filter(x=>n(x.id)),COL={rw:'0.85 0.45 0.1',rc0:'0.2 0.4 0.85',rc1:'0.55 0.3 0.75',rc2:'0.1 0.6 0.6',rc3:'0.45 0.45 0.45'},dpP=AX.map((_,i)=>pt(i,R0*fr(i,'p')));
+if(n('p'))poly(dpP,C.soft);
+[...ms.filter(x=>x.id!='p'&&x.id!='w'),...ms.filter(x=>x.id=='w')].forEach(x=>{const dp=AX.map((_,i)=>pt(i,R0*fr(i,x.id))),col=COL[x.k];dp.forEach((p,i)=>{const q=dp[(i+1)%6];ln(p[0],p[1],q[0],q[1],col,1.2)});dp.forEach(p=>circ(p[0],p[1],2.4,{f:col}))});
+if(n('p')){const dp=dpP;dp.forEach((p,i)=>{const q=dp[(i+1)%6];ln(p[0],p[1],q[0],q[1],C.bl,1.6)});dp.forEach((p,i)=>circ(p[0],p[1],3,{f:val(i,'p')==null?C.lt:C.bl}))}
 AX.forEach((a,i)=>{const p=pt(i,R0+16),co=Math.cos(A[i]),si=Math.sin(A[i]),yy=p[1]+(si>.25?8:si<-.25?-12:3),put=(t,yb,sz,o)=>Math.abs(co)<.25?txc(t,p[0],yb,sz,o):co>0?tx(t,p[0]-4,yb,sz,o):txr(t,p[0]+4,yb,sz,o);put(a.l,yy,8.5,{b:1});put('/ '+a.r,yy+10,7.5,{c:C.lt})});
 c.y+=R0*(1+Math.max(...A.map(Math.sin)))+72;
-table(['Axe','Position'],AX.map((a,i)=>[a.l+' / '+a.r,lvl(i,val(i))]),{w:[230,CW-230]});
-const d=dom();
+if(ms.length>1){let lx=M;ms.forEach(x=>{const col=x.id=='p'?C.bl:COL[x.k],w=x.n.length*4.6+22;if(lx+w>M+CW){lx=M;c.y+=12}ln(lx,c.y-3,lx+12,c.y-3,col,2.4);tx(x.n,lx+16,c.y,8,{c:C.lt});lx+=w});c.y+=16}
+const g=gap(),two=n('w')>0&&n('p')>0;
+table(two?['Axe','Perçue','Voulue','Écart']:['Axe','Position'],AX.map((a,i)=>two?[a.l+' / '+a.r,lvl(i,val(i,'p')),lvl(i,val(i,'w')),(val(i,'p')==null||val(i,'w')==null)?'—':dTxt({i,d:val(i,'p')-val(i,'w')})]:[a.l+' / '+a.r,lvl(i,val(i,n('p')?'p':'w'))]),{w:two?[150,100,100,CW-350]:[230,CW-230]});
+if(g){const t='Cohérence entre personnalité voulue et perçue : '+g.pct+' % ('+g.txt.toLowerCase()+')';need(26);tx(t,M,c.y+12,9.5,{b:1});c.y+=26}
+const d=dom(n('p')?'p':ms[0].id);
 if(d.length){const w=CW-40,B=d.map(x=>{const ps=[['Positionnement',x.p],['Ton de voix',x.t]],hh=hg(x.h,w,12,{b:1});return{x,ps,hh,H:16+hh+6+14+hg(x.d,w,9.2)+10+ps.reduce((s,q)=>s+14+hg(q[1],w,9.2)+8,0)+6}});
-need(22+B[0].H+12);tx('TRAITS DOMINANTS',M,c.y+8,8,{b:1,c:C.bl});c.y+=22;
+need(22+B[0].H+12);tx('TRAITS DOMINANTS · '+mname(n('p')?'p':ms[0].id).toUpperCase(),M,c.y+8,8,{b:1,c:C.bl});c.y+=22;
 B.forEach(({x,ps,hh,H})=>{need(H+12);const t0=c.y;gc(M,t0,CW,H,G.vi,8);let yy=t0+16;yy+=blk(x.h,M+20,yy,w,12,{b:1})+6;tx('Archétype : '+x.a,M+20,yy+9,9,{b:1,c:C.db});yy+=14;yy+=blk(x.d,M+20,yy,w,9.2,{c:'0.2 0.2 0.2'})+10;
 ps.forEach(q=>{tx(q[0],M+20,yy+8,8.5,{b:1,c:C.lt});yy+=14;yy+=blk(q[1],M+20,yy,w,9.2,{c:'0.2 0.2 0.2'})+8});c.y=t0+H+12})}
 const ob=String((S.bp||{}).x||'').trim();
 if(ob){const w=CW-40,h=34+hg(ob,w,9.2);need(h+12);gc(M,c.y,CW,h,G.ne,8);tx('Observations',M+20,c.y+20,10,{b:1});blk(ob,M+20,c.y+26,w,9.2,{c:'0.2 0.2 0.2'});c.y+=h+12}}
 
-window.BP={n,page,pdf,dom,AX,PR};
+window.BP={n:()=>n('p'),page,pdf,dom,register,gap,val,AX,PR,fr};
 })();
